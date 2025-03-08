@@ -1,4 +1,4 @@
-### SecureTrack - File Inntegrity Monitoring App
+### SecureTrack - File Integrity Monitoring App
 
 - A real-time File Integrity Monitoring (FIM) tool that tracks file changes in a specified directory and logs created, modified, deleted, or renamed files. Developed with a Python backend and React+Vite frontend and Tailwind along with ShadCN components for styling.
 
