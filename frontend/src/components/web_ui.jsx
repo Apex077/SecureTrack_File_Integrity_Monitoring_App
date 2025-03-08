@@ -43,8 +43,10 @@ export default function LogDashboard() {
       const data = await response.json();
       if (data.status === "valid") {
         setIsValidDirectory(true);
+        setSelectedDirectory(dirPath);
       } else {
         setIsValidDirectory(false);
+        setSelectedDirectory("");
         alert("Invalid directory. Please enter a valid path.");
       }
     } catch (error) {
@@ -135,7 +137,7 @@ export default function LogDashboard() {
   return (
     <div className={`w-full min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} transition-all`}>
       <div className="flex justify-between items-center p-6">
-        <h1 className="text-2xl font-bold">📊 File Monitor Dashboard</h1>
+        <h1 className="text-2xl font-bold">📊 SecureTrack Dashboard</h1>
         <div className="flex gap-4">
           {/* Refresh Button */}
           <Button onClick={fetchLogs} disabled={loading} className="relative overflow-hidden">
