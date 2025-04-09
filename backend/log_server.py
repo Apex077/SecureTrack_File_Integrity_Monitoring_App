@@ -2,7 +2,9 @@ import threading
 import os
 import time
 import logging
-from flask import Flask, jsonify, request
+import csv
+import io
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from file_monitor import start_monitoring, stop_monitoring
 
@@ -38,6 +40,25 @@ def parse_logs():
         except Exception as e:
             print(f"Error reading log file: {e}")
     return logs
+
+@app.route("/download_logs", methods=["GET"])
+def download_logs():
+    """Allows the user to download logs as a CSV file."""
+    logs = parse_logs()
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=["timestamp", "level", "message"])
+    writer.writeheader()
+    writer.writerows(logs)
+
+    csv_content = output.getvalue()
+    output.close()
+
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=logs.csv"}
+    )
 
 @app.route("/validate_directory", methods=["POST"])
 def validate_directory():

@@ -18,6 +18,37 @@ export default function LogDashboard() {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
+  const downloadCSV = () => {
+    if (!logs || logs.length === 0) return;
+
+    const levelMap = {
+      0: "Debug",
+      1: "Info",
+      2: "Warning",
+      3: "Error",
+      4: "Critical"
+    };
+
+    const headers = ["Timestamp", "Level", "Message"];
+    const rows = logs.map(log => [
+      log.timestamp,
+      levelMap[log.level] || `Unknown (${log.level})`,
+      `"${log.message.replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map(row => row.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "logs.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const fetchLogs = () => {
     setLoading(true);
     fetch("http://localhost:5000/logs")
@@ -175,6 +206,18 @@ export default function LogDashboard() {
               {isMonitoring ? <StopCircle className="w-5 h-5 text-red-500" /> : <Play className="w-5 h-5 text-green-500" />}
             </motion.div>
           </Button>
+
+          {logs.length > 0 && (
+            <Button onClick={downloadCSV} className="relative overflow-hidden">
+              <motion.div
+                initial={{ scale: 1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                📥 Download CSV
+              </motion.div>
+            </Button>
+          )}
 
           {/* Clear Logs Button */}
           <Button onClick={clearLogs} className="relative overflow-hidden">
