@@ -3,22 +3,22 @@ import time
 import hashlib
 import os
 import logging
-from watchdog.observers import Observer  # ✅ Fix for Windows
+from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from database import store_file_hash, get_stored_hash
 from config import DB_PATH, LOG_FILE
 
-# ✅ Setup logging
+# Setup logging
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-# ✅ Global variables to control monitoring
+# Global variables to control monitoring
 is_monitoring = False
 observer = None
-current_directory = None  # ✅ Track selected directory
+current_directory = None  # Track selected directory
 
 def calculate_file_hash(file_path, retries=3, delay = 1.0):
     """Generate SHA-256 hash of a file."""
@@ -60,11 +60,11 @@ class FileMonitorHandler(FileSystemEventHandler):
         stored_hash = get_stored_hash(file_path)
 
         if stored_hash is None:
-            # ✅ New file detected, store it
+            # New file detected, store it
             store_file_hash(file_path, current_hash)
             logging.info(f"ADDED: {file_path} detected and stored.")
         elif stored_hash != current_hash:
-            # ✅ Existing file modified
+            # Existing file modified
             logging.warning(f"MODIFIED: {file_path} has been changed!")
             store_file_hash(file_path, current_hash)
 
@@ -118,7 +118,7 @@ def start_monitoring(directory):
     """Start monitoring the selected directory."""
     global is_monitoring, observer, current_directory
     
-    # ✅ Ensure the directory exists before monitoring
+    # Ensure the directory exists before monitoring
     if not os.path.exists(directory):
         logging.error(f"Directory not found: {directory}")
         return
@@ -128,9 +128,9 @@ def start_monitoring(directory):
         return
 
     is_monitoring = True
-    current_directory = directory  # ✅ Store selected directory
+    current_directory = directory  # Store selected directory
     event_handler = FileMonitorHandler()
-    observer = Observer()  # ✅ Fix for Windows
+    observer = Observer()
     observer.schedule(event_handler, directory, recursive=True)
     observer.start()
     
