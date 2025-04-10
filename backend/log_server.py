@@ -17,9 +17,9 @@ is_monitoring = False
 monitor_lock = threading.Lock()
 selected_directory = None
 
-# ✅ Disable Flask's built-in logging to avoid polluting file_monitor.log
+# Disabling Flask logging
 log = logging.getLogger("werkzeug")
-log.setLevel(logging.ERROR)  # Suppress request logs in console
+log.setLevel(logging.ERROR)
 
 def parse_logs():
     """Reads the log file and extracts only file monitoring logs."""
